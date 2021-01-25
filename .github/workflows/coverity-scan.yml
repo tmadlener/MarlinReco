@@ -10,8 +10,8 @@ jobs:
     - name: Get Coverity Build Tool
       env:
         TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
+        COVERITY_REPO: iLCSoft/MarlinReco
       run: |
-        export COVERITY_REPO=echo ${GITHUB_REPOSITORY} | sed 's/\//\%2F/g'
         wget https://scan.coverity.com/download/linux64 --post-data "token=$TOKEN&project=${COVERITY_REPO}" -O ${GITHUB_WORKSPACE}/coverity_tool.tgz
         cd ${GITHUB_WORKSPACE}
         mkdir cov-analysis-linux64
