@@ -1,0 +1,27 @@
+name: coverity-scan
+on: [push] # TODO: put on schedule
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cvmfs-contrib/github-action-cvmfs@v2
+    - name: Get Coverity Build Tool
+      env:
+        TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
+      run: |
+        export COVERITY_REPO=echo ${GITHUB_REPOSITORY} | sed 's/\//\%2F/g'
+        wget https://scan.coverity.com/download/linux64 --post-data "token=$TOKEN&project=${COVERITY_REPO}" -O ${GITHUB_WORKSPACE}/coverity_tool.tgz
+        cd ${GITHUB_WORKSPACE}
+        mkdir cov-analysis-linux64
+        tar -xf coverity_tool.tgz -C cov-analysis-linux64 --strip-components=1
+    - name: Start container
+      run: |
+        docker run -it --name CI_container -v ${GITHUB_WORKSPACE}:/Package -v /cvmfs:/cvmfs:shared -e COMPILER=gcc -d ghcr.io/aidasoft/centos7:latest /bin/bash
+    - name: Run coverity scan
+      run: |
+        docker exec CI_container /bin/bash -c "./Package/.github/scripts/coverity_scan.sh"
+    - name: Post results
+      run: |
+        ls ${GITHUB_WORKSPAC}/build/myproject.tgz
