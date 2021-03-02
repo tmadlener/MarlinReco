@@ -16,7 +16,7 @@
 #include "EVENT/ReconstructedParticle.h"
 using EVENT::LCCollection, EVENT::ReconstructedParticle;
 
-#error I am run in CI
+// #error I am run in CI
 
 #include "DD4hep/Detector.h"
 #include "DD4hep/DD4hepUnits.h"
